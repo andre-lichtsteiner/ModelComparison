@@ -49,7 +49,11 @@ public class SCMigrationModel extends CalculationNode implements MigrationModel 
             "rateMatrixFlags",
             "Optional boolean parameter specifying which rates to use."
             + " (Default is to use all rates.)");
-    
+
+    public Input<RealParameter> rateMatrixScaleFactorInput = new Input<>("rateMatrixScaleFactor", "Scale factor (real parameter) which will be used to multiply the values in the rateMatrix.");
+
+    public Input<RealParameter> popSizesScaleFactorInput = new Input<>("popSizesScaleFactor", "Scale factor (real parameter) which will be used to multiply the values in the popSizes array.");
+
     protected Function rateMatrix, popSizes;
     protected BooleanParameter rateMatrixFlags;
     protected double mu, muSym;
@@ -78,6 +82,8 @@ public class SCMigrationModel extends CalculationNode implements MigrationModel 
         popSizes = popSizesInput.get();
         rateMatrix = rateMatrixInput.get();
         nTypes = popSizes.getDimension();
+
+
 
         if (rateMatrixFlagsInput.get() != null)
             rateMatrixFlags = rateMatrixFlagsInput.get();
@@ -215,8 +221,16 @@ public class SCMigrationModel extends CalculationNode implements MigrationModel 
         if (rateMatrixFlagsInput.get() != null
                 && !rateMatrixFlagsInput.get().getValue(offset))
             return 0.0;
-        else
-            return rateMatrix.getArrayValue(offset);
+        else{
+            if (rateMatrixScaleFactorInput.get() != null){
+                return rateMatrixScaleFactorInput.get().getValue() * rateMatrix.getArrayValue(offset);
+            }
+            else{
+                return rateMatrix.getArrayValue(offset);
+            }
+        }
+
+
     }
     
     /**
@@ -290,7 +304,12 @@ public class SCMigrationModel extends CalculationNode implements MigrationModel 
      * @return Effective population size.
      */
     public double getPopSize(int i) {
-        return popSizes.getArrayValue(i);
+        if(popSizesScaleFactorInput.get() != null){
+            return popSizesScaleFactorInput.get().getValue() * popSizes.getArrayValue(i);
+        }
+        else {
+            return popSizes.getArrayValue(i);
+        }
     }
 
     @Override
