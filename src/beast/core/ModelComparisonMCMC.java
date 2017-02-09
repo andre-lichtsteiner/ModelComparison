@@ -50,7 +50,7 @@ import beast.util.Randomizer;
                 "  evolutionary analysis. PLoS Computational Biology 10(4): e1003537"
         , year = 2014, firstAuthorSurname = "bouckaert",
         DOI="10.1371/journal.pcbi.1003537")
-public class ModelComparisonMCMC extends MCMC {
+public class ModelComparisonMCMC extends Runnable {
 
     final public Input<Integer> chainLengthInput =
             new Input<>("chainLength", "Length of the MCMC chain i.e. number of samples taken in main loop",
@@ -533,15 +533,17 @@ public class ModelComparisonMCMC extends MCMC {
                     //System.out.println("newLogLikelihoods[0] = " + newLogLikelihoods[0]);
                     //System.out.println("newLogLikelihoods[1] = " + newLogLikelihoods[1]);
 
+                    //Disabling the following for now - just do the usual way of deciding about an operator acceptance
+
                     //The following evaluates the operator based on howit affects one of the inner posteriors, rather than how it affects the whole posterior, as this helps when beta is at one of the extremes
                     //Should perhaps be split based on if the change ONLY affected one of the models, otherwise base it off overall effect
                     if (Math.abs(newLogLikelihoods[0] - oldLogLikelihoods[0]) > 0.0000001 && Math.abs(newLogLikelihoods[1] - oldLogLikelihoods[1]) < 0.0000001){
                         logAlpha = newLogLikelihoods[0] - oldLogLikelihoods[0] + logHastingsRatio;
-                        //System.out.println("-- Affected model 0 only");
+                        //System.out.println("-- Affected (substantially) model 0 only");
                     }
                     else if (Math.abs(newLogLikelihoods[1] - oldLogLikelihoods[1]) > 0.0000001 && Math.abs(newLogLikelihoods[0] - oldLogLikelihoods[0]) < 0.0000001){
                         logAlpha = newLogLikelihoods[1] - oldLogLikelihoods[1] + logHastingsRatio;
-                       // System.out.println("-- Affected model 1 only");
+                       // System.out.println("-- Affected (substantially) model 1 only");
                     }
                     else{
 
@@ -549,6 +551,8 @@ public class ModelComparisonMCMC extends MCMC {
                         logAlpha = ((PowerCompoundDistribution) posterior).calculateLogPFromInnerLogPValues(newLogLikelihoods) - oldLogLikelihood + logHastingsRatio;
                     }
 
+                    //Below line is if not doing anything fancy like the above, just the usual operator acceptance functionality
+                    //logAlpha = ((PowerCompoundDistribution) posterior).calculateLogPFromInnerLogPValues(newLogLikelihoods) - oldLogLikelihood + logHastingsRatio;
 
                     //logAlpha = Math.max(newLogLikelihoods[0] - oldLogLikelihoods[0] + logHastingsRatio, newLogLikelihoods[1] - oldLogLikelihoods[1] + logHastingsRatio);
                     // System.out.println("logHastingsRatio = " + logHastingsRatio);
