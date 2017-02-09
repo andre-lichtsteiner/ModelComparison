@@ -228,18 +228,18 @@ t64=3">
  
    <!-- Parameter priors -->
    <input spec='CompoundDistribution' id='parameterPriors'>
-     <distribution spec='beast.math.distributions.Prior' x="@mutationRate">
+     <distribution spec='beast.beast.distributions.Prior' x="@mutationRate">
        <distr spec='LogNormalDistributionModel' M="0.0" S="4.0"/>
      </distribution>
 
-     <distribution spec='beast.math.distributions.Prior' x="@hky.kappa">
+     <distribution spec='beast.beast.distributions.Prior' x="@hky.kappa">
        <distr spec='LogNormalDistributionModel' M="0.0" S="4.0"/>
      </distribution>
 
-     <distribution spec='beast.math.distributions.Prior' x="@rateMatrix">
+     <distribution spec='beast.beast.distributions.Prior' x="@rateMatrix">
        <distr spec='LogNormalDistributionModel' M="0.0" S="4.0"/>
      </distribution>
-     <distribution spec='beast.math.distributions.Prior' x="@popSizes">
+     <distribution spec='beast.beast.distributions.Prior' x="@popSizes">
        <distr spec="LogNormalDistributionModel"  M="0.0" S="4.0"/>
      </distribution>
    </input>

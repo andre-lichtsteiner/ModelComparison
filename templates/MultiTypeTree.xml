@@ -11,23 +11,23 @@
     :beast.evolution.substitutionmodel
     :beast.evolution.likelihood
     :beast.evolution
-    :beast.math.distributions
+    :beast.beast.distributions
     :multitypetree.operators
     :multitypetree.distributions'
     templateinfo='template for structured coalescent analyses'>
 
        <map name='connect' reserved='true'>beast.app.beauti.BeautiConnector</map>
        <map name='subtemplate' reserved='true'>beast.app.beauti.BeautiSubTemplate</map>
-       <map name='Uniform'>beast.math.distributions.Uniform</map>
-       <map name='Normal'>beast.math.distributions.Normal</map>
-       <map name='OneOnX'>beast.math.distributions.OneOnX</map>
-       <map name='LogNormal'>beast.math.distributions.LogNormalDistributionModel</map>
-       <map name='Exponential'>beast.math.distributions.Exponential</map>
-       <map name='Gamma'>beast.math.distributions.Gamma</map>
-       <map name='Beta'>beast.math.distributions.Beta</map>
-       <map name='LaplaceDistribution'>beast.math.distributions.LaplaceDistribution</map>
-       <map name='InverseGamma'>beast.math.distributions.InverseGamma</map>
-       <map name='prior'>beast.math.distributions.Prior</map>
+       <map name='Uniform'>beast.beast.distributions.Uniform</map>
+       <map name='Normal'>beast.beast.distributions.Normal</map>
+       <map name='OneOnX'>beast.beast.distributions.OneOnX</map>
+       <map name='LogNormal'>beast.beast.distributions.LogNormalDistributionModel</map>
+       <map name='Exponential'>beast.beast.distributions.Exponential</map>
+       <map name='Gamma'>beast.beast.distributions.Gamma</map>
+       <map name='Beta'>beast.beast.distributions.Beta</map>
+       <map name='LaplaceDistribution'>beast.beast.distributions.LaplaceDistribution</map>
+       <map name='InverseGamma'>beast.beast.distributions.InverseGamma</map>
+       <map name='prior'>beast.beast.distributions.Prior</map>
 
        <beauticonfig spec='BeautiConfig'
            inputLabelMap='beast.core.MCMC.operator=Operators,
@@ -87,10 +87,10 @@
                               beast.evolution.substitutionmodel.MTREV.frequencies,
                               beast.evolution.substitutionmodel.GTR.rates,
                               beast.evolution.substitutionmodel.JukesCantor.frequencies,
-                              beast.math.distributions.Prior.x,
-                              beast.math.distributions.MRCAPrior.tree,
-                              beast.math.distributions.MRCAPrior.monophyletic,
-                              beast.math.distributions.MRCAPrior.taxonset,
+                              beast.beast.distributions.Prior.x,
+                              beast.beast.distributions.MRCAPrior.tree,
+                              beast.beast.distributions.MRCAPrior.monophyletic,
+                              beast.beast.distributions.MRCAPrior.taxonset,
                               beast.evolution.branchratemodel.UCRelaxedClockModel.tree,
                               beast.evolution.branchratemodel.UCRelaxedClockModel.rateCategories,
                               beast.evolution.branchratemodel.UCRelaxedClockModel.distr,
@@ -199,27 +199,27 @@
             <!-- Parameter priors -->
 
             <prior id='ClockPrior.c:$(n)' x='@clockRate.c:$(n)'>
-                <distr spec="beast.math.distributions.Uniform" upper='Infinity'/>
+                <distr spec="beast.beast.distributions.Uniform" upper='Infinity'/>
             </prior>
 
             <prior id='MutationRatePrior.s:$(n)' x='@mutationRate.s:$(n)'>
-                <distr spec="beast.math.distributions.OneOnX"/>
+                <distr spec="beast.beast.distributions.OneOnX"/>
             </prior>
 
             <prior id='GammaShapePrior.s:$(n)' x='@gammaShape.s:$(n)'>
-                <distr spec="beast.math.distributions.Exponential" mean='1'/>
+                <distr spec="beast.beast.distributions.Exponential" mean='1'/>
             </prior>
 
             <prior id='PropInvariantPrior.s:$(n)' x='@proportionInvariant.s:$(n)'>
-                <distr spec="beast.math.distributions.Uniform" lower='0' upper='1'/>
+                <distr spec="beast.beast.distributions.Uniform" lower='0' upper='1'/>
             </prior>
 
             <prior id='popSizesPrior.t:$(n)' x='@popSizes.t:$(n)'>
-                <distr spec="beast.math.distributions.OneOnX"/>
+                <distr spec="beast.beast.distributions.OneOnX"/>
             </prior>
 
             <prior id='rateMatrixPrior.t:$(n)' x='@rateMatrix.t:$(n)'>
-                <distr spec="beast.math.distributions.OneOnX"/>
+                <distr spec="beast.beast.distributions.OneOnX"/>
             </prior>
 
             <!-- Parameter operators -->
