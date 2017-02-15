@@ -20,13 +20,7 @@ public class ModelComparisonDistribution extends CompoundDistribution{
 
    public Input<RealParameter> betaParameterInput = new Input<>("betaParameter", "Beta parameter as in the paper by Lartillot and Philippe. ");
 
-    //public Input<ModelComparisonMCMC> mcmcObjectInput = new Input<>("mcmc", "specify the MCMC object");
-
-    private double[] innerPosteriorLogP;
-    private ModelComparisonMCMC mcmcObject;
-    //private Distribution[] likelihoodDists;
-    //private Distribution[] priorDists;
-
+   private double[] innerPosteriorLogP;
 
     public double getBetaValue(){
         return betaParameterInput.get().getValue();
@@ -36,21 +30,12 @@ public class ModelComparisonDistribution extends CompoundDistribution{
     public void initAndValidate(){
         super.initAndValidate();
 
-       // mcmcObject = mcmcObjectInput.get();
-
         innerPosteriorLogP = new double[2]; //Set up empty
 
         if (pDistributions.get().size() != 2){
             System.out.println("Must provide exactly two distributions for ModelComparisonDistribution.");
             throw new IndexOutOfBoundsException("Wrong number of distributions provided.");
         }
-        /*
-        if (betaControlAutomaticallyInput.get() != null){
-            betaControlAutomatically = betaControlAutomaticallyInput.get().getValue();
-        }
-        */
-
-        //betaValue = betaParameterInput.get().getValue(); // Just to set its starting value
 
     }
 
@@ -65,14 +50,7 @@ public class ModelComparisonDistribution extends CompoundDistribution{
     public double calculateLogPFromInnerLogPValues(double[] innerLogPValues){
 
         double totalLogP = 0;
-        /*
-        if ( ! betaControlAutomatically){
-            betaValue = betaParameterInput.get().getValue();
-            // betaParameterValue = betaValue;
-        }
-        */
 
-      //  double betaValue = mcmcObject.getBetaValue();
         double betaValue = betaParameterInput.get().getValue();
 
         totalLogP = ((1 - betaValue) * innerLogPValues[0]);
