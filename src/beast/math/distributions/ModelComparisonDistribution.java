@@ -22,9 +22,16 @@ public class ModelComparisonDistribution extends CompoundDistribution{
 
    private double[] innerPosteriorLogP;
 
-    public double getBetaValue(){
-        return betaParameterInput.get().getValue();
+   private double betaValue;
+
+   public double getBetaValue(){
+       return betaValue;
+   }
+
+    public void setBetaValue(double newValue){
+        betaValue = newValue;
     }
+
 
     @Override
     public void initAndValidate(){
@@ -50,8 +57,6 @@ public class ModelComparisonDistribution extends CompoundDistribution{
     public double calculateLogPFromInnerLogPValues(double[] innerLogPValues){
 
         double totalLogP = 0;
-
-        double betaValue = betaParameterInput.get().getValue();
 
         totalLogP = ((1 - betaValue) * innerLogPValues[0]);
         totalLogP = totalLogP + (betaValue * innerLogPValues[1]);

@@ -63,6 +63,8 @@ public class ModelComparisonMCMC extends MCMC {
     private double[] oldLogLikelihoods;
     private double[] newLogLikelihoods;
     private String betaControlMode;
+    private double betaStartingValue;
+    private int inversionSampleNr;
     private double betaIncrement;
 
 
@@ -78,7 +80,8 @@ public class ModelComparisonMCMC extends MCMC {
 
         betaControlMode = betaControlModeInput.get().toLowerCase();
         if (betaControlMode.equals("static") || betaControlMode.equals("oneway") || betaControlMode.equals("bothways")){
-            //betaValue = betaParameterInput.get().getValue(); // Just to set its starting value
+            betaStartingValue = betaParameterInput.get().getValue(); // Just to set its starting value
+            ((ModelComparisonDistribution) posteriorInput.get()).setBetaValue(betaStartingValue);
         }
         else{
 
@@ -88,7 +91,6 @@ public class ModelComparisonMCMC extends MCMC {
             throw new IllegalArgumentException("Invalid option specified for betaControlMode (on the ModelComparisonMCMC object)");
         }
 
-
             innerPosteriors = new Distribution[2];
             innerPosteriors[0] = ((ModelComparisonDistribution) posteriorInput.get()).pDistributions.get().get(0);
             innerPosteriors[1] = ((ModelComparisonDistribution) posteriorInput.get()).pDistributions.get().get(1);
@@ -96,23 +98,48 @@ public class ModelComparisonMCMC extends MCMC {
 
 
 
+        if (betaStartingValue != 0.0 || betaStartingValue != 1.0){
+            System.out.println();
+            System.out.println("You have specified a starting value for beta which is neither 1 nor 0. Be wary of this in interpreting the validity of your results. Read the documentation for Model Comparison for more information.");
+            System.out.println();
+        }
+
+        if( ! betaControlMode.equals("static")){
+            chainLength = chainLengthInput.get();
+            initBetaIncrement();
+        }
+
+        oldLogLikelihoods[0] = innerPosteriors[0].calculateLogP();
+        oldLogLikelihoods[1] = innerPosteriors[1].calculateLogP();
+
+        ((ModelComparisonDistribution) posteriorInput.get()).cacheInnerLogPValues(oldLogLikelihoods);
+
     } // init
 
     @Override
     public void run() throws IOException, SAXException, ParserConfigurationException {
+
+
+
+
+
+
+
+
+
         super.run();
 
-        oldLogLikelihoods[0] = innerPosteriors[0].calculateLogP();
-        oldLogLikelihoods[1] = innerPosteriors[1].calculateLogP();
-        ((ModelComparisonDistribution) posterior).cacheInnerLogPValues(oldLogLikelihoods);
 
-        if(betaControlMode != "static"){
+        /*
+        if(betaControlMode.equals("oneway")){
             // if (((ModelComparisonDistribution) posterior).betaControlAutomatically) {
             //double intervalSide0 = 1.0 - ((ModelComparisonDistribution) posterior).betaValue;
+
             double intervalSide0 = 1.0 - betaParameterInput.get().getValue();
             double intervalSide1 = 1.0 - intervalSide0;
 
             double betaIntervalSize = Math.abs(intervalSide0 - intervalSide1);
+
             double incrementSignFactor = 1.0;
             if(intervalSide0 < intervalSide1){
                 //Use negative increments
@@ -121,36 +148,72 @@ public class ModelComparisonMCMC extends MCMC {
             //((ModelComparisonDistribution) posterior).betaIncrement = (betaIntervalSize / chainLength) * incrementSignFactor; //TODO this is currently very hacky
             betaIncrement = (betaIntervalSize / chainLength) * incrementSignFactor; //TODO this is currently very hacky
 
-
             //System.out.println("Chain length: " + chainLength);
             //System.out.println("Have set betaIncrement to be: " + (1.0 / chainLength));
             //System.out.println("Checking its value: " + ((ModelComparisonDistribution) posterior).betaIncrement);
         }
+        else if(betaControlMode.equals("bothways")){
+            inversionSampleNr = chainLength / 2; // This does integer division, resulting in an int always
+
+
+
+        }
+        */
+
+
 
     } // run;
 
+    private void initBetaIncrement(){
+        double intervalSide0 = 1.0 - betaParameterInput.get().getValue();
+        double intervalSide1 = 1.0 - intervalSide0;
 
-    private boolean incrementBetaIfRequired(){
-        if(betaControlMode == "oneway") {
-            //Increment beta sliiiiightly
-            //double betaIncrement = ((ModelComparisonDistribution) posterior).betaIncrement;
+        double betaIntervalSize = Math.abs(intervalSide0 - intervalSide1);
 
-            //betaValue = betaValue + betaIncrement;
-            betaParameterInput.get().setValue(betaParameterInput.get().getValue() + betaIncrement);
+        double incrementSignFactor = 1.0;
+        if(intervalSide0 < intervalSide1){
+            //Use negative increments
+            incrementSignFactor = -1.0;
+        }
+
+        if(betaControlMode.equals("oneway")){
+            betaIncrement = (betaIntervalSize / (chainLength) ) * incrementSignFactor; //TODO this is currently very hacky
+
+
+        }
+        else if(betaControlMode.equals("bothways")){
+            double effectiveChainLength = (chainLength / 2.0) + 2;// - 1;
+            betaIncrement = (betaIntervalSize / effectiveChainLength) * incrementSignFactor; //TODO THIS IS WRONG
+            //Should this be chainLength - 1 not have that? I believe that it should be - 1 when doing bothways if at the far extreme we don't change the value of beta (ie beta is the same for two consecutive samples before then returning downwards)
+            inversionSampleNr = chainLength / 2; //integer division
+        }
+
+        System.out.println("BetaIncrement: " + betaIncrement);
+    }
+
+
+    private boolean incrementBetaIfRequired(int sampleNr){
+        if(betaControlMode.equals("oneway")) {
+            _doActualIncrement();
             return true;
 
         }
-        else if (betaControlMode == "bothways"){
+        else if (betaControlMode .equals("bothways")){
             //Do same as for one way, but also once beta gets to the other extreme (based on chainLength), need to invert betaIncrement for the next step
             //at the initialisation time the betaIncrement should take into account the size of
 
-
-
-            return false; //Should return true once it is set up correctly.
+            if (sampleNr == inversionSampleNr){
+                betaIncrement = ( - betaIncrement);
+            }
+            else{
+                _doActualIncrement();
+            }
+            return true;
         }
         else { //ie. if "static"
             return false;
         }
+
 
         /*
         if (((ModelComparisonDistribution) posterior).betaControlAutomatically){
@@ -164,6 +227,11 @@ public class ModelComparisonMCMC extends MCMC {
             return false;
         }
         */
+    }
+
+    private void _doActualIncrement(){
+        double tempBeta = ((ModelComparisonDistribution) posterior).getBetaValue();
+        ((ModelComparisonDistribution) posterior).setBetaValue(tempBeta + betaIncrement);
     }
 
     private double recalculateOldLogLikelihoodWithNewBeta(){
@@ -212,11 +280,12 @@ public class ModelComparisonMCMC extends MCMC {
 
             final int currentState = sampleNr;
 
-            if(posterior instanceof ModelComparisonDistribution){
-                if(incrementBetaIfRequired()){ //Returns true if beta was incremented
+            if(sampleNr != 0) {
+                if (incrementBetaIfRequired(sampleNr)) { //Returns true if beta was incremented
                     oldLogLikelihood = recalculateOldLogLikelihoodWithNewBeta(); // oldLogLikelihoods are updated also
                 }
             }
+
             state.store(currentState);
 //            if (m_nStoreEvery > 0 && sample % m_nStoreEvery == 0 && sample > 0) {
 //                state.storeToFile(sample);
@@ -264,7 +333,6 @@ public class ModelComparisonMCMC extends MCMC {
 
                 // Rejig this for when posterior is a ModelComparisonDistribution
                 newLogLikelihoods = new double[2];
-                if (posterior instanceof ModelComparisonDistribution){
                     newLogLikelihoods[0] = innerPosteriors[0].calculateLogP();
                     newLogLikelihoods[1] = innerPosteriors[1].calculateLogP();
                     //Not sure if the above is going to cause some kind of issue elsewhere?
@@ -300,12 +368,7 @@ public class ModelComparisonMCMC extends MCMC {
                     // System.out.println("logHastingsRatio = " + logHastingsRatio);
                     //System.out.println("logAlpha = " + logAlpha);
                     //This may or may not be correct
-                }
-                else{ //Original stuff
-                    newLogLikelihood = posterior.calculateLogP();
-                    logAlpha = newLogLikelihood - oldLogLikelihood + logHastingsRatio; //CHECK HASTINGS
-                    if (printDebugInfo) System.err.print(logAlpha + " " + newLogLikelihood + " " + oldLogLikelihood);
-                }
+
 
 
                 //Before acceptance, update oldLogLikelihood based on the new beta value if need be
