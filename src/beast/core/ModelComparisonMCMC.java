@@ -182,7 +182,7 @@ public class ModelComparisonMCMC extends MCMC {
 
         }
         else if(betaControlMode.equals("bothways")){
-            double effectiveChainLength = (chainLength / 2.0) + 2;// - 1;
+            double effectiveChainLength = (chainLength / 2.0);// - 1;
             betaIncrement = (betaIntervalSize / effectiveChainLength) * incrementSignFactor; //TODO THIS IS WRONG
             //Should this be chainLength - 1 not have that? I believe that it should be - 1 when doing bothways if at the far extreme we don't change the value of beta (ie beta is the same for two consecutive samples before then returning downwards)
             inversionSampleNr = chainLength / 2; //integer division
@@ -202,12 +202,13 @@ public class ModelComparisonMCMC extends MCMC {
             //Do same as for one way, but also once beta gets to the other extreme (based on chainLength), need to invert betaIncrement for the next step
             //at the initialisation time the betaIncrement should take into account the size of
 
-            if (sampleNr == inversionSampleNr){
+            if (sampleNr == inversionSampleNr + 1){
                 betaIncrement = ( - betaIncrement);
+
+
             }
-            else{
                 _doActualIncrement();
-            }
+
             return true;
         }
         else { //ie. if "static"
@@ -231,7 +232,11 @@ public class ModelComparisonMCMC extends MCMC {
 
     private void _doActualIncrement(){
         double tempBeta = ((ModelComparisonDistribution) posterior).getBetaValue();
-        ((ModelComparisonDistribution) posterior).setBetaValue(tempBeta + betaIncrement);
+        double newValue = tempBeta + betaIncrement;
+        //Just to ensure that slight rounding/double precision doesn't mean we get outside the correct range
+        if (newValue > 1.0){newValue = 1.0;}
+        if (newValue < 0.0){newValue = 0.0;}
+        ((ModelComparisonDistribution) posterior).setBetaValue(newValue);
     }
 
     private double recalculateOldLogLikelihoodWithNewBeta(){
