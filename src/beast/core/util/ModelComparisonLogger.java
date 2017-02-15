@@ -3,7 +3,7 @@ package beast.core.util;
 import beast.core.BEASTObject;
 import beast.core.Input;
 import beast.core.Loggable;
-import beast.math.distributions.PowerCompoundDistribution;
+import beast.math.distributions.ModelComparisonDistribution;
 
 import java.io.PrintStream;
 
@@ -12,9 +12,9 @@ import java.io.PrintStream;
  */
 public class ModelComparisonLogger extends BEASTObject implements Loggable {
 
-    public Input<PowerCompoundDistribution> posteriorInput = new Input<>("posteriorDistribution", "The BEASTObject which is the posterior. Must be a PowerCompoundDistribution");
+    public Input<ModelComparisonDistribution> posteriorInput = new Input<>("posteriorDistribution", "The BEASTObject which is the posterior. Must be a ModelComparisonDistribution");
 
-    public PowerCompoundDistribution posteriorObject;
+    public ModelComparisonDistribution posteriorObject;
 
     @Override
     public void initAndValidate(){

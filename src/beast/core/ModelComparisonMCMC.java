@@ -32,8 +32,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import beast.math.distributions.PowerCompoundDistribution;
-import org.apache.commons.math3.analysis.function.Pow;
+import beast.math.distributions.ModelComparisonDistribution;
 import org.xml.sax.SAXException;
 
 import beast.core.util.CompoundDistribution;
@@ -174,11 +173,11 @@ public class ModelComparisonMCMC extends Runnable {
         }
 
 
-        if (posteriorInput.get() instanceof PowerCompoundDistribution){
-            System.out.println("Posterior is a PowerCompoundDistribution");
+        if (posteriorInput.get() instanceof ModelComparisonDistribution){
+            System.out.println("Posterior is a ModelComparisonDistribution");
             innerPosteriors = new Distribution[2];
-            innerPosteriors[0] = ((PowerCompoundDistribution) posteriorInput.get()).pDistributions.get().get(0);
-            innerPosteriors[1] = ((PowerCompoundDistribution) posteriorInput.get()).pDistributions.get().get(1);
+            innerPosteriors[0] = ((ModelComparisonDistribution) posteriorInput.get()).pDistributions.get().get(0);
+            innerPosteriors[1] = ((ModelComparisonDistribution) posteriorInput.get()).pDistributions.get().get(1);
             oldLogLikelihoods = new double[2];
 
             //if(innerPosteriors[0] instanceof CompoundDistribution){
@@ -322,14 +321,14 @@ public class ModelComparisonMCMC extends Runnable {
         state.storeCalculationNodes();
 
 
-        if (posterior instanceof PowerCompoundDistribution){
+        if (posterior instanceof ModelComparisonDistribution){
             oldLogLikelihoods[0] = innerPosteriors[0].calculateLogP();
             oldLogLikelihoods[1] = innerPosteriors[1].calculateLogP();
-            ((PowerCompoundDistribution) posterior).cacheInnerLogPValues(oldLogLikelihoods);
+            ((ModelComparisonDistribution) posterior).cacheInnerLogPValues(oldLogLikelihoods);
 
 
-            if (((PowerCompoundDistribution) posterior).betaControlAutomatically) {
-                double intervalSide0 = 1.0 - ((PowerCompoundDistribution) posterior).betaValue;
+            if (((ModelComparisonDistribution) posterior).betaControlAutomatically) {
+                double intervalSide0 = 1.0 - ((ModelComparisonDistribution) posterior).betaValue;
                 double intervalSide1 = 1.0 - intervalSide0;
 
                 double betaIntervalSize = Math.abs(intervalSide0 - intervalSide1);
@@ -338,12 +337,12 @@ public class ModelComparisonMCMC extends Runnable {
                     //Use negative increments
                     incrementSignFactor = -1.0;
                 }
-                ((PowerCompoundDistribution) posterior).betaIncrement = (betaIntervalSize / chainLength) * incrementSignFactor; //TODO this is currently very hacky
+                ((ModelComparisonDistribution) posterior).betaIncrement = (betaIntervalSize / chainLength) * incrementSignFactor; //TODO this is currently very hacky
 
 
                 //System.out.println("Chain length: " + chainLength);
                 //System.out.println("Have set betaIncrement to be: " + (1.0 / chainLength));
-                //System.out.println("Checking its value: " + ((PowerCompoundDistribution) posterior).betaIncrement);
+                //System.out.println("Checking its value: " + ((ModelComparisonDistribution) posterior).betaIncrement);
             }
         }
 
@@ -416,11 +415,11 @@ public class ModelComparisonMCMC extends Runnable {
 
 
     private boolean incrementBetaIfRequired(){
-        if (((PowerCompoundDistribution) posterior).betaControlAutomatically){
+        if (((ModelComparisonDistribution) posterior).betaControlAutomatically){
             //Increment beta sliiiiightly
-            double betaIncrement = ((PowerCompoundDistribution) posterior).betaIncrement;
+            double betaIncrement = ((ModelComparisonDistribution) posterior).betaIncrement;
 
-            ((PowerCompoundDistribution) posterior).betaValue = ((PowerCompoundDistribution) posterior).betaValue + betaIncrement;
+            ((ModelComparisonDistribution) posterior).betaValue = ((ModelComparisonDistribution) posterior).betaValue + betaIncrement;
             return true;
         }
         else{
@@ -436,9 +435,9 @@ public class ModelComparisonMCMC extends Runnable {
 
         oldLogLikelihoods[0] = innerPosteriors[0].calculateLogP();
         oldLogLikelihoods[1] = innerPosteriors[1].calculateLogP();
-        ((PowerCompoundDistribution) posterior).cacheInnerLogPValues(oldLogLikelihoods);
+        ((ModelComparisonDistribution) posterior).cacheInnerLogPValues(oldLogLikelihoods);
 
-        return ((PowerCompoundDistribution) posterior).calculateLogPFromInnerLogPValues(oldLogLikelihoods);
+        return ((ModelComparisonDistribution) posterior).calculateLogPFromInnerLogPValues(oldLogLikelihoods);
 
 
         //inner_LogLikelihoods[0] = innerPosteriors[0].calculateLogP();
@@ -469,7 +468,7 @@ public class ModelComparisonMCMC extends Runnable {
 
             final int currentState = sampleNr;
 
-            if(posterior instanceof PowerCompoundDistribution){
+            if(posterior instanceof ModelComparisonDistribution){
                 if(incrementBetaIfRequired()){ //Returns true if beta was incremented
                     oldLogLikelihood = recalculateOldLogLikelihoodWithNewBeta(); // oldLogLikelihoods are updated also
                 }
@@ -522,9 +521,9 @@ public class ModelComparisonMCMC extends Runnable {
                     state.checkCalculationNodesDirtiness();
                 }
 
-                // Rejig this for when posterior is a PowerCompoundDistribution
+                // Rejig this for when posterior is a ModelComparisonDistribution
                 newLogLikelihoods = new double[2];
-                if (posterior instanceof PowerCompoundDistribution){
+                if (posterior instanceof ModelComparisonDistribution){
                     newLogLikelihoods[0] = innerPosteriors[0].calculateLogP();
                     newLogLikelihoods[1] = innerPosteriors[1].calculateLogP();
                     //Not sure if the above is going to cause some kind of issue elsewhere?
@@ -549,12 +548,12 @@ public class ModelComparisonMCMC extends Runnable {
                     else{
 
                         //System.out.println("------------------------- Must have affected both/neither model ------------------------");
-                        logAlpha = ((PowerCompoundDistribution) posterior).calculateLogPFromInnerLogPValues(newLogLikelihoods) - oldLogLikelihood + logHastingsRatio;
+                        logAlpha = ((ModelComparisonDistribution) posterior).calculateLogPFromInnerLogPValues(newLogLikelihoods) - oldLogLikelihood + logHastingsRatio;
                     }
                     */
 
                     //Below line is if not doing anything fancy like the above, just the usual operator acceptance functionality
-                    logAlpha = ((PowerCompoundDistribution) posterior).calculateLogPFromInnerLogPValues(newLogLikelihoods) - oldLogLikelihood + logHastingsRatio;
+                    logAlpha = ((ModelComparisonDistribution) posterior).calculateLogPFromInnerLogPValues(newLogLikelihoods) - oldLogLikelihood + logHastingsRatio;
 
                     //logAlpha = Math.max(newLogLikelihoods[0] - oldLogLikelihoods[0] + logHastingsRatio, newLogLikelihoods[1] - oldLogLikelihoods[1] + logHastingsRatio);
                     // System.out.println("logHastingsRatio = " + logHastingsRatio);
@@ -569,22 +568,22 @@ public class ModelComparisonMCMC extends Runnable {
 
 
                 //Before acceptance, update oldLogLikelihood based on the new beta value if need be
-                //if (posterior instanceof PowerCompoundDistribution){
+                //if (posterior instanceof ModelComparisonDistribution){
                 //    oldLogLikelihoods = newLogLikelihoods;
                 //    //newLogLikelihood = posterior.calculateLogP(); // Can make this more efficient by not doing a combination calcualtion rather than re doing the whole calculation again //Need to update full posterior LogP also or otherwise confusion will follow
-                //    newLogLikelihood = ((PowerCompoundDistribution) posterior).calculateLogPFromInnerLogPValues(newLogLikelihoods); //This should be more efficient
+                //    newLogLikelihood = ((ModelComparisonDistribution) posterior).calculateLogPFromInnerLogPValues(newLogLikelihoods); //This should be more efficient
                 //    oldLogLikelihood = newLogLikelihood;
                 //}
 
 
                 if (logAlpha >= 0 || Randomizer.nextDouble() < Math.exp(logAlpha)) {
                     // accept
-                    if (posterior instanceof PowerCompoundDistribution){
+                    if (posterior instanceof ModelComparisonDistribution){
                         oldLogLikelihoods = newLogLikelihoods;
                         //newLogLikelihood = posterior.calculateLogP(); // Can make this more efficient by not doing a combination calcualtion rather than re doing the whole calculation again //Need to update full posterior LogP also or otherwise confusion will follow
-                        newLogLikelihood = ((PowerCompoundDistribution) posterior).calculateLogPFromInnerLogPValues(newLogLikelihoods); //This should be more efficient
+                        newLogLikelihood = ((ModelComparisonDistribution) posterior).calculateLogPFromInnerLogPValues(newLogLikelihoods); //This should be more efficient
                         oldLogLikelihood = newLogLikelihood;
-                        ((PowerCompoundDistribution) posterior).cacheInnerLogPValues(oldLogLikelihoods); //Update after the operator has now done its thing
+                        ((ModelComparisonDistribution) posterior).cacheInnerLogPValues(oldLogLikelihoods); //Update after the operator has now done its thing
                     }
                     else {
                         oldLogLikelihood = newLogLikelihood;
@@ -599,7 +598,7 @@ public class ModelComparisonMCMC extends Runnable {
                 } else {
                     // reject
                     if (sampleNr >= 0) {
-                        if(posterior instanceof PowerCompoundDistribution){
+                        if(posterior instanceof ModelComparisonDistribution){
                             if (newLogLikelihoods[0] == Double.NEGATIVE_INFINITY || newLogLikelihoods[1] == Double.NEGATIVE_INFINITY){
                                 operator.reject(-1);
                             }
@@ -683,14 +682,14 @@ public class ModelComparisonMCMC extends Runnable {
 
             /* Previously had this down here
             //Update the value of beta, if asked to
-            if(posterior instanceof PowerCompoundDistribution){
-                if (((PowerCompoundDistribution) posterior).betaControlAutomatically){
+            if(posterior instanceof ModelComparisonDistribution){
+                if (((ModelComparisonDistribution) posterior).betaControlAutomatically){
                     //Increment beta sliiiiightly
-                    double betaIncrement = ((PowerCompoundDistribution) posterior).betaIncrement;
+                    double betaIncrement = ((ModelComparisonDistribution) posterior).betaIncrement;
                     //System.out.println(betaIncrement);
 
-                    ((PowerCompoundDistribution) posterior).betaValue = ((PowerCompoundDistribution) posterior).betaValue + betaIncrement;
-                    //System.out.println(((PowerCompoundDistribution) posterior).betaValue);
+                    ((ModelComparisonDistribution) posterior).betaValue = ((ModelComparisonDistribution) posterior).betaValue + betaIncrement;
+                    //System.out.println(((ModelComparisonDistribution) posterior).betaValue);
                 }
             }
             */

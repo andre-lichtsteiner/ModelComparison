@@ -175,7 +175,7 @@ public class MCMC extends Runnable {
 
 
         if (posteriorInput.get() instanceof PowerCompoundDistribution){
-            System.out.println("Posterior is a PowerCompoundDistribution");
+            System.out.println("Posterior is a ModelComparisonDistribution");
             innerPosteriors = new Distribution[2];
             innerPosteriors[0] = ((PowerCompoundDistribution) posteriorInput.get()).pDistributions.get().get(0);
             innerPosteriors[1] = ((PowerCompoundDistribution) posteriorInput.get()).pDistributions.get().get(1);
@@ -455,7 +455,7 @@ public class MCMC extends Runnable {
                     state.checkCalculationNodesDirtiness();
                 }
 
-                // Rejig this for when posterior is a PowerCompoundDistribution
+                // Rejig this for when posterior is a ModelComparisonDistribution
                 newLogLikelihoods = new double[2];
                 if (posterior instanceof PowerCompoundDistribution){
 

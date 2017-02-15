@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
  */
 
 @Citation("Lartilot and Philippe (2006) 'Computing Bayes Factors Using Thermodynamic Integration''")
-public class PowerCompoundDistribution extends CompoundDistribution{
+public class ModelComparisonDistribution extends CompoundDistribution{
 
     public Input<RealParameter> betaParameterInput = new Input<>("betaParameter", "Beta parameter as in the paper by Lartillot and Philippe. ");
     public Input<BooleanParameter> betaControlAutomaticallyInput = new Input<>("automaticallyControlBeta", "If this is true, beta will automatically and continuously change from the value provided to beta parameter and one minus that value.", new BooleanParameter("false"));
@@ -35,7 +35,7 @@ public class PowerCompoundDistribution extends CompoundDistribution{
         innerPosteriorLogP = new double[2]; //Set up empty
 
         if (pDistributions.get().size() != 2){
-            System.out.println("Must provide exactly two distributions for PowerCompoundDistribution.");
+            System.out.println("Must provide exactly two distributions for ModelComparisonDistribution.");
             throw new IndexOutOfBoundsException("Wrong number of distributions provided.");
         }
 
@@ -90,7 +90,7 @@ public class PowerCompoundDistribution extends CompoundDistribution{
                     } else if (dist.pDistributions.get().get(j).getID().startsWith("prior")) {
                         priorDists[i] = dist.pDistributions.get().get(j);
                     } else {
-                        throw new NoSuchElementException("Could not find a distribution with ID starting with either 'prior' or 'likelihood' inside one of the inner posteriors in the PowerCompoundDistribution.");
+                        throw new NoSuchElementException("Could not find a distribution with ID starting with either 'prior' or 'likelihood' inside one of the inner posteriors in the ModelComparisonDistribution.");
                     }
                 }
             }
