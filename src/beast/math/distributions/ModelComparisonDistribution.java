@@ -4,6 +4,7 @@ package beast.math.distributions;
 import beast.core.Citation;
 import beast.core.Distribution;
 import beast.core.Input;
+import beast.core.ModelComparisonMCMC;
 import beast.core.parameter.BooleanParameter;
 import beast.core.parameter.RealParameter;
 import beast.core.util.CompoundDistribution;
@@ -17,20 +18,25 @@ import java.util.NoSuchElementException;
 @Citation("Lartilot and Philippe (2006) 'Computing Bayes Factors Using Thermodynamic Integration''")
 public class ModelComparisonDistribution extends CompoundDistribution{
 
-    public Input<RealParameter> betaParameterInput = new Input<>("betaParameter", "Beta parameter as in the paper by Lartillot and Philippe. ");
-    public Input<BooleanParameter> betaControlAutomaticallyInput = new Input<>("automaticallyControlBeta", "If this is true, beta will automatically and continuously change from the value provided to beta parameter and one minus that value.", new BooleanParameter("false"));
+   public Input<RealParameter> betaParameterInput = new Input<>("betaParameter", "Beta parameter as in the paper by Lartillot and Philippe. ");
 
-    public boolean betaControlAutomatically;
-    public double betaValue;
-    public double betaIncrement;
+    //public Input<ModelComparisonMCMC> mcmcObjectInput = new Input<>("mcmc", "specify the MCMC object");
+
     private double[] innerPosteriorLogP;
+    private ModelComparisonMCMC mcmcObject;
     //private Distribution[] likelihoodDists;
     //private Distribution[] priorDists;
 
 
+    public double getBetaValue(){
+        return betaParameterInput.get().getValue();
+    }
+
     @Override
     public void initAndValidate(){
         super.initAndValidate();
+
+       // mcmcObject = mcmcObjectInput.get();
 
         innerPosteriorLogP = new double[2]; //Set up empty
 
@@ -38,12 +44,13 @@ public class ModelComparisonDistribution extends CompoundDistribution{
             System.out.println("Must provide exactly two distributions for ModelComparisonDistribution.");
             throw new IndexOutOfBoundsException("Wrong number of distributions provided.");
         }
-
+        /*
         if (betaControlAutomaticallyInput.get() != null){
             betaControlAutomatically = betaControlAutomaticallyInput.get().getValue();
         }
+        */
 
-        betaValue = betaParameterInput.get().getValue(); // Just to set its starting value
+        //betaValue = betaParameterInput.get().getValue(); // Just to set its starting value
 
     }
 
@@ -58,11 +65,15 @@ public class ModelComparisonDistribution extends CompoundDistribution{
     public double calculateLogPFromInnerLogPValues(double[] innerLogPValues){
 
         double totalLogP = 0;
+        /*
         if ( ! betaControlAutomatically){
             betaValue = betaParameterInput.get().getValue();
             // betaParameterValue = betaValue;
         }
+        */
 
+      //  double betaValue = mcmcObject.getBetaValue();
+        double betaValue = betaParameterInput.get().getValue();
 
         totalLogP = ((1 - betaValue) * innerLogPValues[0]);
         totalLogP = totalLogP + (betaValue * innerLogPValues[1]);

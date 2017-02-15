@@ -28,7 +28,7 @@ public class ModelComparisonLogger extends BEASTObject implements Loggable {
 
     @Override
     public void log(int sample, PrintStream out) {
-        double betaValue = posteriorObject.betaValue;
+        double betaValue = posteriorObject.getBetaValue();
         out.print(betaValue + "\t");
         out.print(calculateUValue() + "\t");
     }

@@ -32,7 +32,10 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import beast.core.parameter.RealParameter;
 import beast.math.distributions.ModelComparisonDistribution;
+import beast.util.InputType;
+import org.antlr.v4.runtime.Parser;
 import org.xml.sax.SAXException;
 
 import beast.core.util.CompoundDistribution;
@@ -91,10 +94,17 @@ public class ModelComparisonMCMC extends Runnable {
 
     final public Input<OperatorSchedule> operatorScheduleInput = new Input<>("operatorschedule", "specify operator selection and optimisation schedule", new OperatorSchedule());
 
+    final public Input<String> betaControlModeInput = new Input<>("betaControlMode", "specify the way that beta should be controlled across the MCMC chain. valid options: 'static' (don't change beta); 'oneway' (beta will change from  0 to 1 OR 1 to 0); 'bothways' (beta will change in one direction and then return to the start)", Input.Validate.REQUIRED);
+
+    final public Input<RealParameter> betaParameterInput = new Input<>("betaParameter", "the parameter which will be used in calculating the posterior, switching between models");
+
     /*** Custom things below for ModelComparison ***/
     private Distribution[] innerPosteriors;
-    double[] oldLogLikelihoods;
-    double[] newLogLikelihoods;
+    private double[] oldLogLikelihoods;
+    private double[] newLogLikelihoods;
+    private String betaControlMode;
+    private double betaIncrement;
+    //private double betaValue;
 
 
     /**
@@ -135,12 +145,14 @@ public class ModelComparisonMCMC extends Runnable {
 
 
 
+
     @Override
     public void initAndValidate() {
         Log.info.println("===============================================================================");
         Log.info.println("Citations for this model:");
         Log.info.println(getCitations());
         Log.info.println("===============================================================================");
+
 
         operatorSchedule = operatorScheduleInput.get();
         for (final Operator op : operatorsInput.get()) {
@@ -172,9 +184,23 @@ public class ModelComparisonMCMC extends Runnable {
             }
         }
 
+        //Should assume that we always are working in the ModelComparison context
 
-        if (posteriorInput.get() instanceof ModelComparisonDistribution){
-            System.out.println("Posterior is a ModelComparisonDistribution");
+        String betaControlMode = betaControlModeInput.get().toLowerCase();
+        if (betaControlMode.equals("static") || betaControlMode.equals("oneway") || betaControlMode.equals("bothways")){
+            //betaValue = betaParameterInput.get().getValue(); // Just to set its starting value
+        }
+        else{
+
+            System.out.println("Invalid option specified for betaControlMode (on the ModelComparisonMCMC object)");
+            System.out.println("the value you specified was: \"" + betaControlMode + '"');
+            System.out.println("valid options are: 'static' (don't change beta); 'oneway' (beta will change from  0 to 1 OR 1 to 0); 'bothways' (beta will change in one direction and then return to the start)");
+            throw new IllegalArgumentException("Invalid option specified for betaControlMode (on the ModelComparisonMCMC object)");
+        }
+
+
+        //if (posteriorInput.get() instanceof ModelComparisonDistribution){
+            //System.out.println("Posterior is a ModelComparisonDistribution");
             innerPosteriors = new Distribution[2];
             innerPosteriors[0] = ((ModelComparisonDistribution) posteriorInput.get()).pDistributions.get().get(0);
             innerPosteriors[1] = ((ModelComparisonDistribution) posteriorInput.get()).pDistributions.get().get(1);
@@ -183,7 +209,7 @@ public class ModelComparisonMCMC extends Runnable {
             //if(innerPosteriors[0] instanceof CompoundDistribution){
             //   System.out.println("InnerPosterior 0 is a compound dist");
             //}
-        }
+       // }
 
         // StateNode initialisation, only required when the state is not read from file
         if (restoreFromFile) {
@@ -321,14 +347,15 @@ public class ModelComparisonMCMC extends Runnable {
         state.storeCalculationNodes();
 
 
-        if (posterior instanceof ModelComparisonDistribution){
+      //  if (posterior instanceof ModelComparisonDistribution){
             oldLogLikelihoods[0] = innerPosteriors[0].calculateLogP();
             oldLogLikelihoods[1] = innerPosteriors[1].calculateLogP();
             ((ModelComparisonDistribution) posterior).cacheInnerLogPValues(oldLogLikelihoods);
 
-
-            if (((ModelComparisonDistribution) posterior).betaControlAutomatically) {
-                double intervalSide0 = 1.0 - ((ModelComparisonDistribution) posterior).betaValue;
+            if(betaControlMode != "static"){
+              // if (((ModelComparisonDistribution) posterior).betaControlAutomatically) {
+                //double intervalSide0 = 1.0 - ((ModelComparisonDistribution) posterior).betaValue;
+                double intervalSide0 = 1.0 - betaParameterInput.get().getValue();
                 double intervalSide1 = 1.0 - intervalSide0;
 
                 double betaIntervalSize = Math.abs(intervalSide0 - intervalSide1);
@@ -337,14 +364,15 @@ public class ModelComparisonMCMC extends Runnable {
                     //Use negative increments
                     incrementSignFactor = -1.0;
                 }
-                ((ModelComparisonDistribution) posterior).betaIncrement = (betaIntervalSize / chainLength) * incrementSignFactor; //TODO this is currently very hacky
+                //((ModelComparisonDistribution) posterior).betaIncrement = (betaIntervalSize / chainLength) * incrementSignFactor; //TODO this is currently very hacky
+                betaIncrement = (betaIntervalSize / chainLength) * incrementSignFactor; //TODO this is currently very hacky
 
 
                 //System.out.println("Chain length: " + chainLength);
                 //System.out.println("Have set betaIncrement to be: " + (1.0 / chainLength));
                 //System.out.println("Checking its value: " + ((ModelComparisonDistribution) posterior).betaIncrement);
             }
-        }
+     //   }
 
         // do the sampling
         logAlpha = 0;
@@ -415,6 +443,25 @@ public class ModelComparisonMCMC extends Runnable {
 
 
     private boolean incrementBetaIfRequired(){
+        if(betaControlMode == "oneway") {
+            //Increment beta sliiiiightly
+            //double betaIncrement = ((ModelComparisonDistribution) posterior).betaIncrement;
+
+            //betaValue = betaValue + betaIncrement;
+            betaParameterInput.get().setValue(betaParameterInput.get().getValue() + betaIncrement);
+            return true;
+
+        }
+        else if (betaControlMode == "bothways"){
+            //Do same as for one way, but also once beta gets to the other extreme (based on chainLength), need to invert betaIncrement for the next step
+            //at the initialisation time the betaIncrement should take into account the size of
+            return false;
+        }
+        else { //ie. if "static"
+            return false;
+        }
+
+        /*
         if (((ModelComparisonDistribution) posterior).betaControlAutomatically){
             //Increment beta sliiiiightly
             double betaIncrement = ((ModelComparisonDistribution) posterior).betaIncrement;
@@ -425,6 +472,7 @@ public class ModelComparisonMCMC extends Runnable {
         else{
             return false;
         }
+        */
     }
 
     private double recalculateOldLogLikelihoodWithNewBeta(){
