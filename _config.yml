@@ -7,12 +7,20 @@ paginate:     1
 # About/contact
 author:
   name:       Andre Lichtsteiner
-  url:        https://andre-lichtsteiner.github.io/ModelComparison/
+  url:        https://andre-lichtsteiner.github.io/
 
+github_url: https://github.com/andre-lichtsteiner/ModelComparison
+
+
+#Collab links
+people_urls:
+  tim: https://github.com/tgvaughan
+  david: https://www.cs.auckland.ac.nz/~davidw/
+  alexei: https://twitter.com/alexeidrummond
 
 #General constansts
 github_username:  andre-lichtsteiner
-lartillot_paper_link: http://lartillot.com
+lartillot_paper_link: http://dx.doi.org/10.1080/10635150500433722
 lartillot_paper_title: "Computing Bayes Factors Using Thermodynamic Integration"
 lartillot_paper_authors: "Nicolas Lartillot and Hervé Phillipe"
 lartillot_paper_citation: 'Lartillot, Nicolas, and Hervé Philippe. "Computing Bayes factors using thermodynamic integration." Systematic biology 55.2 (2006): 195-207.'
