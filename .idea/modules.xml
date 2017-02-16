@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../BEASTLabs/BEASTLabs.iml" filepath="$PROJECT_DIR$/../BEASTLabs/BEASTLabs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Beast2/Beast2.iml" filepath="$PROJECT_DIR$/../Beast2/Beast2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ModelComparison.iml" filepath="$PROJECT_DIR$/ModelComparison.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,26 +1,2 @@
-# Build directories
-/dist
-/build
-/build-lib
-/build-beast
-/out
-
-# netbeans cruft
-/nbbuild.xml
-/manifest.mf
-/nbproject
-
-# intellij cruft
-/.idea
-/MultiTypeTree.iml
-/META-INF
-
-# Ignore BEAST logfiles
-*.log
-*.trees
-*.state
-
-# Other cruft:
-.localrc
-.localrcbye
-/examples/h3n2
+Gemfile.lock
+/_site

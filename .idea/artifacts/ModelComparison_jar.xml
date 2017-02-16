@@ -1,0 +1,20 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ModelComparison:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ModelComparison_jar</output-path>
+    <root id="archive" name="ModelComparison.jar">
+      <element id="module-output" name="ModelComparison" />
+      <element id="module-output" name="Beast2" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/guava-15.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../Beast2/lib/jam.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../Beast2/lib/colt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../Beast2/lib/fest.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../Beast2/lib/beagle.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../Beast2/lib/debug-1.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../Beast2/lib/junit-4.8.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../Beast2/lib/fest-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../Beast2/lib/antlr-runtime-4.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../Beast2/lib/commons-math3-3.1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jblas-1.2.3.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

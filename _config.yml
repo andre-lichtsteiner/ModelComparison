@@ -1,0 +1,36 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely edit after that. If you find
+# yourself editing this file very often, consider using Jekyll's data files
+# feature for the data you need to update frequently.
+#
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+# These are used to personalize your new site. If you look in the HTML files,
+# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
+# You can create any custom variable you would like, and they will be accessible
+# in the templates via {{ site.myvariable }}.
+title: Model Comparison in BEAST 2
+#email: your-email@domain.com
+personal_site: http://andrelichtsteiner.com
+description: > # this means to ignore newlines until "baseurl:"
+  This BEAST package was created by Andre Lichtsteiner with help from Tim Vaughan, David Welch, and Alexei Drummond.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://andre-lichtsteiner.github.io/ModelComparison/" # the base hostname & protocol for your site, e.g. http://example.com
+github_username:  andre-lichtsteiner
+lartillot_paper_link: http://lartillot.com
+lartillot_paper_title: "Computing Bayes Factors Using Thermodynamic Integration"
+lartillot_paper_authors: "Nicolas Lartillot and Hervé Phillipe"
+lartillot_paper_authors_short: "Lartillot and Phillipe"
+
+# Build settings
+markdown: kramdown
+theme: minima
+gems:
+  - jekyll-feed
+exclude:
+  - Gemfile
+  - Gemfile.lock
