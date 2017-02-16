@@ -199,3 +199,46 @@ h1.page_heading{
 a#page_header_title{
 	color:white;
 }
+
+.class_path{
+	opacity:0.65;
+	transition: opacity 1s, font-size 1s;
+	font-size:0.8em;
+}
+.class_path:hover{
+	opacity:1;
+	font-size:1em;
+}
+.class_name{
+
+}
+
+.beast_object{
+	margin-top: 1em;
+    margin-bottom: 1em;
+    padding-top:0.5em;
+    padding-bottom:0.5em;
+
+    padding-left: 1em;
+    border-left: 0.2em gray solid;
+}
+
+.member_name_precursor{
+	margin-left: 0.7em;
+	opacity:0.65;
+	transition: opacity 1s, font-size 1s, color 1s;
+	font-size:0.8em;
+}
+.member_name_precursor:hover{
+	opacity:1;
+	font-size:1em;
+	color:black;
+}
+.member_name{
+	margin-left: 0.3em;
+	font-style: italic;
+	color:black;
+}
+.beast_object li{
+	font-size:0.8em;
+}
