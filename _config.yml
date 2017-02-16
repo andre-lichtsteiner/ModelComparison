@@ -1,13 +1,23 @@
 # Setup
-title:        Project or Site name
-tagline:      A responsive theme for your project on GitHub Pages
-baseurl:      ""
+title:        ModelComparison
+tagline:      This BEAST package adds support to BEAST 2 for model switch integration - a method of comparing two models similar to path sampling. It was created by Andre Lichtsteiner with help from Tim Vaughan, David Welch, and Alexei Drummond; based on a paper by Nicolas Lartillot and Herve Phillipe.
+baseurl:      "/ModelComparison"
 paginate:     1
 
 # About/contact
 author:
-  name:       Author name
-  url:        http://yourhomepage.com 
+  name:       Andre Lichtsteiner
+  url:        https://andre-lichtsteiner.github.io/ModelComparison/
+
+
+#General constansts
+github_username:  andre-lichtsteiner
+lartillot_paper_link: http://lartillot.com
+lartillot_paper_title: "Computing Bayes Factors Using Thermodynamic Integration"
+lartillot_paper_authors: "Nicolas Lartillot and Hervé Phillipe"
+lartillot_paper_citation: 'Lartillot, Nicolas, and Hervé Philippe. "Computing Bayes factors using thermodynamic integration." Systematic biology 55.2 (2006): 195-207.'
+# (MLA style)
+lartillot_paper_authors_short: "Lartillot and Phillipe"
 
 # Gems
 gems:
