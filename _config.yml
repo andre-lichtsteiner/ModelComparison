@@ -1,13 +1,14 @@
 # Setup
 title:        ModelComparison
-tagline:      This BEAST package adds support to BEAST 2 for model switch integration - a method of comparing two models similar to path sampling. It was created by Andre Lichtsteiner with help from Tim Vaughan, David Welch, and Alexei Drummond; based on a paper by Nicolas Lartillot and Herve Phillipe.
+tagline:      Package for BEAST 2
+description:      This BEAST package adds support to BEAST 2 for model switch integration - a method of comparing two models similar to path sampling. It was created by Andre Lichtsteiner with help from Tim Vaughan, David Welch, and Alexei Drummond; based on a paper by Nicolas Lartillot and Herve Phillipe.
 baseurl:      "/ModelComparison"
 paginate:     1
 
 # About/contact
 author:
   name:       Andre Lichtsteiner
-  url:        https://andre-lichtsteiner.github.io/
+  url:        http://andrelichtsteiner.com/
 
 github_url: https://github.com/andre-lichtsteiner/ModelComparison
 beauti_package_repo_url: none yet

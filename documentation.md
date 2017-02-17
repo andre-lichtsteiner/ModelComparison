@@ -51,8 +51,6 @@ This package uses:
 - a logger which records the beta and U values as often as you wish
 - a tool which uses the recorded beta and U values to estimate the Bayes factor
 
-You must specify the first three of these to be used within your BEAST XML file or the run will not result in a comparison of the two models.
-
 ## BEAST Objects
 <div class="beast_object">
 <h3><span class='class_path'>beast.math.distributions.</span><span class="class_name">ModelComparisonDistribution</span></h3>
@@ -61,22 +59,17 @@ This BEAST object is a Distribution, and it does the work of calculating the pos
 
 <h4>Options/Inputs</h4>
 <span class="member_name_precursor">name:</span><span class="member_name">betaParameter</span>
-<ul>
-<li>This is a RealParameter (ie. a decimal number) which is used by ModelComparisonDistribution in calculating the posterior. </li>
-<li>Note:</li>
-<li>This should be set to either 0 or 1 in your XML</li>
-<li>Although you can choose other values if you wish, ModelComparison won't stop you. If you wanted to explore just a subset of the 0 to 1 space, you can do this by setting the value of the betaValue to something like 0.3, and then it will go from 0.3 to 0.7, or from 0.1 to 0.1 (is this useful to someone?) (?? Also does it still work this way?)</li>
-</ul>
-
+<div class="indented_block">
+<p/>This is a RealParameter (ie. a decimal number) which is used by ModelComparisonDistribution in calculating the posterior.
+<p/>(This should be set to either 0 or 1 in your XML)
+</div>
 
 <span class="member_name_precursor">name:</span><span class="member_name">distribution</span>
-<ul>
-<li>You must provide exactly two distributions as input to the ModelComparisonDistribution</li>
-<li>These will be your posteriors from your two models which you are wanting to compare</li>
-<li>The first distribution will be raised to the power of (1 - beta) in the posterior, and the second distribution will be raised to the power of beta</li>
-<li>(So when beta is equal to 0, the overall posterior will be exactly equal to the first distribution, as it will be raised to the power of 1, while the second distribution will be raised to the power of zero.)</li>
-</ul>
-
+<div class="indented_block">
+<p/>You must provide exactly two distributions as input to the ModelComparisonDistribution.
+These will be your posteriors from your two models which you are wanting to compare.
+<p/>The first distribution will be raised to the power of (1 - beta) in the posterior, and the second distribution will be raised to the power of beta.
+</div>
 
 <h4>Usage example</h4>
 {% highlight xml %}
@@ -99,50 +92,52 @@ This extends BEAST'S usual MCMC chain code to allow for the values of beta to be
 
 <h4>Options/Inputs</h4>
 <span class="member_name_precursor">name:</span><span class="member_name">betaParameter</span>
-<ul>
-<li>This must be the same betaParameter which is used by ModelComparisonDistribution as above.</li>
-</ul>
+<div class="indented_block">
+<p/>This must be the same betaParameter which is used by ModelComparisonDistribution as above.
+</div>
 
 <span class="member_name_precursor">name:</span><span class="member_name">betaControlMode</span>
-<ul>
-<li>This is a text input which determines how the ModelComparison package should control the value of the beta parameter (if at all) so that it slowly changes over the course of the BEAST run</li>
-<li>Note:</li>
-<li>Before using Model Comparison to control the value of beta, you must first equilibrate your run using one of either 0 or 1</li>
-</ul>
+<div class="indented_block">
+<p/>This is a text input which determines how the ModelComparison package should control the value of the beta parameter (if at all) so that it slowly changes over the course of the BEAST run.
 
-Note:<br/>
-<ul><li>Many of the same options apply as for usual MCMC (chainLength for example) but not all of them have been tested with ModelComparison</li></ul>
+<p/>Valid options:<br/>
+<span class="option_title">static</span><span class="option_description">keep beta the same throughout the run</span><br/>
+<span class="option_title">oneway</span><span class="option_description">slowly change beta from either 0 to 1 or 1 to 0 throughout the run</span><br/>
+<span class="option_title">bothways</span><span class="option_description">slowly change beta in one direction, then back again to the starting value throughout the run</span><br/>
 
+
+
+<p/>Note: Before using Model Comparison to control the value of beta, you must first equilibrate your run using beta set to either 0 or 1
+
+</div>
 <h4>Usage example</h4>
 Instead of using this:
 {% highlight xml %}
 <run chainLength="20000000" id="mcmc"
 spec="beast.core.MCMC">
+</run>
 {% endhighlight %}
 Use this:
 {% highlight xml %}
 <run chainLength="20000000" id="mcmc"
 spec="beast.core.ModelComparisonMCMC"
-betaParameter="@myBetaParameter">
+betaParameter="@myBetaParameter"
+betaControlMode="static">
+</run>
 {% endhighlight %}
-
-
 
 </div>
 <div class="beast_object">
 <h3><span class='class_path'>beast.core.util.</span><span class="class_name">ModelComparisonLogger</span></h3>
 
-This allows for logging the values of beta and U (as defined in the [{{site.lartillot_paper_authors_short}}]({{site.lartillot_paper_link}}) paper).
+This allows for logging the values of beta and U (as defined in the Lartillot and Phillipe paper).
 
-(??) This seems to have been put in the wrong folder currently...
-
-#### Options/Inputs
-- posteriorDistribution
-  - This is the ModelComparisonDistribution which is your posterior distribution.
-
-#### Usage
-
-
+<h4>Options/Inputs</h4>
+<span class="member_name_precursor">name:</span><span class="member_name">posteriorDistribution</span>
+<div class="indented_block">
+<p/>This is the ModelComparisonDistribution which is your posterior distribution.
+</div>
+<h4>Usage example</h4>
 Add the following to any logger (eg. the screenlog or tracelog logger:
 {% highlight xml %}
 <log spec="util.ModelComparisonLogger" posteriorDistribution="@posterior"/>

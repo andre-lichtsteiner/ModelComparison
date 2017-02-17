@@ -140,9 +140,9 @@ a:hover { text-decoration: underline; }
   .btn + .btn { margin-top: 1rem; margin-left: 0; } }
 
 .page-header { color: #fff; text-align: center; background-color: #159957; background-image: linear-gradient(120deg, #155799, #159957); }
-@media screen and (min-width: 64em) { .page-header { padding: 5rem 6rem; } }
-@media screen and (min-width: 42em) and (max-width: 64em) { .page-header { padding: 3rem 4rem; } }
-@media screen and (max-width: 42em) { .page-header { padding: 2rem 1rem; } }
+@media screen and (min-width: 64em) { .page-header { padding: 2rem 6rem; } }
+@media screen and (min-width: 42em) and (max-width: 64em) { .page-header { padding: 2rem 4rem; } }
+@media screen and (max-width: 42em) { .page-header { padding: 1rem; } }
 
 .project-name { margin-top: 0; margin-bottom: 0.1rem; }
 @media screen and (min-width: 64em) { .project-name { font-size: 3.25rem; } }
@@ -216,11 +216,12 @@ a#page_header_title{
 .beast_object{
 	margin-top: 1em;
     margin-bottom: 1em;
+    margin-left:1em;
     padding-top:0.5em;
     padding-bottom:0.5em;
 
     padding-left: 1em;
-    border-left: 0.2em gray solid;
+    border-left: 0.1em gray solid;
 }
 
 .member_name_precursor{
@@ -241,4 +242,40 @@ a#page_header_title{
 }
 .beast_object li{
 	font-size:0.8em;
+}
+
+.main-content h2{
+	border-left: 0.2em #159957 solid;
+    padding-left: 0.6em;
+}
+
+
+.indented_block{
+	margin-left:2em;
+	padding-right:1.2em;
+	font-size:0.8em;
+}
+
+.option_title{
+	margin-left:1em;
+	 font-style:italic;
+}
+.option_title:after{
+	content: ":";
+}
+.option_description{
+	margin-left:1em;
+}
+
+.posts li{
+	font-size: 1.2em
+}
+
+.site-footer{
+	font-size:0.8em;
+	opacity:0.65;
+	transition: opacity 1s
+}
+.site-footer:hover{
+	opacity:1;
 }
