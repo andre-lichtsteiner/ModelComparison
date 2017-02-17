@@ -1,15 +1,5 @@
 package beast.app.tools;
 
-import beast.app.beauti.Beauti;
-import beast.app.beauti.BeautiConfig;
-import beast.app.beauti.BeautiDoc;
-import beast.app.draw.BEASTObjectDialog;
-import beast.app.draw.BEASTObjectPanel;
-//import beast.app.util.Application; //Might be a part of BEASTLabs? Yes
-//import beast.app.util.ConsoleApp;
-import beast.app.util.XMLFile;
-import beast.core.BEASTObject;
-import jam.util.IconUtils;
 
 import java.io.*;
 import java.util.ArrayList;

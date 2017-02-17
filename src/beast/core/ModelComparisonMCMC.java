@@ -56,7 +56,7 @@ public class ModelComparisonMCMC extends MCMC {
 
     final public Input<String> betaControlModeInput = new Input<>("betaControlMode", "specify the way that beta should be controlled across the MCMC chain. valid options: 'static' (don't change beta); 'oneway' (beta will change from  0 to 1 OR 1 to 0); 'bothways' (beta will change in one direction and then return to the start)", Input.Validate.REQUIRED);
 
-    final public Input<RealParameter> betaParameterInput = new Input<>("betaParameter", "the parameter which will be used in calculating the posterior, switching between models");
+    final public Input<RealParameter> betaParameterInput = new Input<>("betaParameter", "the parameter which will be used in calculating the posterior, switching between models", Input.Validate.REQUIRED);
 
     /*** Custom things below for ModelComparison ***/
     private Distribution[] innerPosteriors;
