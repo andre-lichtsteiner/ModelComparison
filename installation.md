@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Installation
+permalink: /installation/
 ---
 
 ### Usual method
