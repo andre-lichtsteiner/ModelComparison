@@ -7,7 +7,19 @@ title: {{ site.name }}
 <h2>Introduction</h2>
 Welcome.
 
-[[Basic info here]]
+This is a BEAST 2 package for comparing two models using the Model Switch Integration method outlined in <a href="{{site.lartillot_paper_link}}">{{site.lartillot_paper_title}}</a> by {{site.lartillot_paper_authors}}.
+  
+It is used to estimate the Bayes factor between two competing models.
+  
+  <h3>About the method</h3>
+
+This method progressively moves the analysis from using one model to using the other, ie. it “switches” between them slowly.
+
+In this package, we take the idea of progressively changing between the models further, by moving incrementally at every step of the MCMC chain.
+
+The advantage of this method is that it works in situations where sampling from the prior is infeasible - meaning that other approaches such as path sampling/stepping stone cannot be used.
+One example of situations such as these are structured coalescent models with many demes.
+This also gives a much more accurate estimate for the Bayes factor than the harmonic mean estimator or AICM. 
 
 <h2>News and Updates</h2>
   
