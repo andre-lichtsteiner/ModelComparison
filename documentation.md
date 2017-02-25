@@ -12,13 +12,13 @@ This package is primarily based on the quasistatic version of the "model switch 
 The modification we have made to their method is changing the value of beta at *every* step of the MCMC chain rather than at set intervals. Beta is therefore changed **very** slowly, so as to not cause issues with equilibration.
 
 <h4>Summary of the method</h4>
-The main idea of this method is to progressively change the target density from being the posterior of one model to the posterior of another model, which allows estimating the Bayes factor.
+The main idea of this method is to progressively change the target density from being the posterior of one model to the posterior of another model, which allows estimation of the Bayes factor.
 
 This is accomplished by setting the posterior density to the product of the two model posteriors, with one raised to the power of the parameter **beta** and the other raised to **1 - beta**.
 
-Regularly across the chain, a value called **U** in the {{site.lartillot_paper_authors}} paper is calculated which is later used in estimating the Bayes factor.
+Regularly across the chain, a value called **U** in the {{site.lartillot_paper_authors}} paper is calculated, which is later used in estimating the Bayes factor.
 
-Please read the above paper for more understanding of this method.
+Please read the above paper to obtain a more thorough understanding of this method.
 
 ## Installation
 
@@ -27,20 +27,20 @@ Please refer to the [instructions for installation]({{site.baseurl}}/installatio
 ## Basics of Usage
 
 This package can be used to calculate the Bayes factor of one model over another.
-It can be used in certain cases where path sampling fails, particularly where sampling from the prior is simply impractical.
+It can be used in certain cases where path sampling fails, particularly where sampling from the prior is impractical.
 
-One use of this is for structured trees (eg. using [MultiTypeTree](https://tgvaughan.github.io/MultiTypeTree/)) which become challenging when there are more than ust a few demes.
+One use of this is for structured trees (eg. using [MultiTypeTree](https://tgvaughan.github.io/MultiTypeTree/)) which becomes challenging when there are more than just a few demes.
 
-It is also worth checking out the [tutorials](/tutorials/).
+It is also worth checking out the [tutorials]({{site.baseurl}}/tutorials/).
 
 **General overview of how this package can be used:**
 
-1. Install the ModelComparison package (?? More details required - maybe even a separate page?)
-2. Setup a BEAST XML file which specifies your analysis (see tutorials and below documentation)
-3. Equilibrate the run (run an initial chain until equilibrated) (?? More detail)
-4. Modify one value in the XML file (telling ModelComparison to progressively switch between your two models)
-5. Resume the run using the changed XML file 
-6. Run the command line tool (built-in) to estimate the Bayes factor using the log file
+1. [Install]({{site.baseurl}}/installation/) the ModelComparison package
+2. Setup a BEAST XML file which specifies your analysis (see tutorials and below documentation, as well as examples in the [package directory]({{site.github_url}}))
+3. Equilibrate the run (run an initial chain until equilibrated) (more detail in [tutorials]({{site.baseurl}}/tutorials/))
+4. Modify the _betaControlMode_ value in the XML file (telling ModelComparison to progressively switch between your two models)
+5. Resume the run using the modified XML file 
+6. [Run the command line tool]({{site.baseurl}}/tutorial/2017/02/26/final-step-estimating-the-bayes-factor-from-a-log-file) (built-in) to estimate the Bayes factor using the log file
 
 ## Overview of the package
 
