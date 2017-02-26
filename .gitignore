@@ -12,7 +12,7 @@
 
 # intellij cruft
 /.idea
-/MultiTypeTree.iml
+/ModelComparison.iml
 /META-INF
 
 # Ignore BEAST logfiles

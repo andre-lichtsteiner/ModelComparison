@@ -98,7 +98,7 @@ public class ModelComparisonMCMC extends MCMC {
 
 
 
-        if (betaStartingValue != 0.0 || betaStartingValue != 1.0){
+        if (betaStartingValue - 0 > 0.0000001 && betaStartingValue - 1 > 0.0000001){
             System.out.println();
             System.out.println("You have specified a starting value for beta which is neither 1 nor 0. Be wary of this in interpreting the validity of your results. Read the documentation for Model Comparison for more information.");
             System.out.println();

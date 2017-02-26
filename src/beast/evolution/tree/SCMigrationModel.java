@@ -26,6 +26,8 @@ import beast.core.parameter.RealParameter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.jblas.DoubleMatrix;
 import org.jblas.MatrixFunctions;
 
@@ -54,6 +56,10 @@ public class SCMigrationModel extends CalculationNode implements MigrationModel 
 
     public Input<RealParameter> popSizesScaleFactorInput = new Input<>("popSizesScaleFactor", "Scale factor (real parameter) which will be used to multiply the values in the popSizes array.");
 
+    public final Input<BooleanParameter> rateMatrixIndicatorInput = new Input<>("rateMatrixIndicator", "Can set flags which indicate which dimensions of the rate matrix should be scaled by the rateMatrixScaleFactor");
+
+    public final Input<BooleanParameter> popSizesIndicatorInput = new Input<>("popSizesIndicator", "Can set flags which indicate which dimensions of popSizes should be scaled by the popSizesScaleFactor");
+
     protected Function rateMatrix, popSizes;
     protected BooleanParameter rateMatrixFlags;
     protected double mu, muSym;
@@ -63,7 +69,9 @@ public class SCMigrationModel extends CalculationNode implements MigrationModel 
     protected List<DoubleMatrix> RpowN, RsymPowN;
     protected DoubleMatrix RpowMax, RsymPowMax;
     protected boolean RpowSteady, RsymPowSteady;
-    
+    protected BooleanParameter rateMatrixIndicator;
+    protected BooleanParameter popSizesIndicator;
+
     protected boolean rateMatrixIsSquare, symmetricRateMatrix;
     
     // Flag to indicate whether EV decompositions need updating.
@@ -83,6 +91,14 @@ public class SCMigrationModel extends CalculationNode implements MigrationModel 
         rateMatrix = rateMatrixInput.get();
         nTypes = popSizes.getDimension();
 
+
+        if(rateMatrixIndicatorInput.get() != null){
+            rateMatrixIndicator = rateMatrixIndicatorInput.get();
+        }
+
+        if(popSizesIndicatorInput.get() != null){
+            popSizesIndicator = popSizesIndicatorInput.get();
+        }
 
 
         if (rateMatrixFlagsInput.get() != null)
@@ -222,12 +238,25 @@ public class SCMigrationModel extends CalculationNode implements MigrationModel 
                 && !rateMatrixFlagsInput.get().getValue(offset))
             return 0.0;
         else{
-            if (rateMatrixScaleFactorInput.get() != null){
-                return rateMatrixScaleFactorInput.get().getValue() * rateMatrix.getArrayValue(offset);
+            if (rateMatrixScaleFactorInput.get() != null) {
+
+                if (rateMatrixIndicator != null) {
+                    if (rateMatrixIndicator.getArrayValue(offset) == 1) {
+                        return rateMatrixScaleFactorInput.get().getValue() * rateMatrix.getArrayValue(offset);
+                        //Only multiply by the scaleFactor if the indicator flags told us to
+                    } else {
+                        return rateMatrix.getArrayValue(offset);
+                        //Didn't want to scale this
+                    }
+                } else {
+                    //No indicator so must want all to be scaled
+                    return rateMatrixScaleFactorInput.get().getValue() * rateMatrix.getArrayValue(offset);
+                }
             }
             else{
                 return rateMatrix.getArrayValue(offset);
             }
+
         }
 
 
@@ -305,7 +334,18 @@ public class SCMigrationModel extends CalculationNode implements MigrationModel 
      */
     public double getPopSize(int i) {
         if(popSizesScaleFactorInput.get() != null){
-            return popSizesScaleFactorInput.get().getValue() * popSizes.getArrayValue(i);
+
+            if(popSizesIndicator != null){
+                if(popSizesIndicator.getArrayValue(i) == 1){
+                    return popSizesScaleFactorInput.get().getValue() * popSizes.getArrayValue(i);
+                }
+                else{
+                    return popSizes.getArrayValue(i);
+                }
+            }
+            else{
+                return popSizesScaleFactorInput.get().getValue() * popSizes.getArrayValue(i);
+            }
         }
         else {
             return popSizes.getArrayValue(i);
