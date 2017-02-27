@@ -1,0 +1,7 @@
+https://andre-lichtsteiner.github.io/ModelComparison/
+https://andre-lichtsteiner.github.io/ModelComparison/tutorials/
+https://andre-lichtsteiner.github.io/ModelComparison/installation/
+https://andre-lichtsteiner.github.io/ModelComparison/documentation/
+https://andre-lichtsteiner.github.io/ModelComparison/using-modelcomparison-calculator/
+https://andre-lichtsteiner.github.io/ModelComparison/tutorial/2017/02/13/tutorial-using-model-comparison-with-multitypetree-to-compare-different-migration-models.html
+https://andre-lichtsteiner.github.io/ModelComparison/news/2017/02/27/first-news-post.html
