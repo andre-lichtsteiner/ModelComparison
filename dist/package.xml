@@ -1,0 +1,8 @@
+<packages>
+    <package name='ModelComparison' version='1.0.0'
+           url="https://andre-lichtsteiner.github.io/ModelComparison/dist/ModelComparison.v1.0.0.zip"
+           description="Estimation of Bayes factor via Model-Switch Integration"
+           projectURL="https://andre-lichtsteiner.github.io/ModelComparison/" >
+        <depends on='BEAST' atleast='2.4.0' />
+    </package>
+</packages>
