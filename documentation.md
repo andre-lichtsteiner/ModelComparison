@@ -155,9 +155,11 @@ Or alternatively add a new logger which saves only the beta and U values to a fi
 <div class="beast_object">
 <h3><span class='class_path'>beast.app.tools.</span><span class="class_name">ModelComparisonCalculator</span></h3>
 
-<p/>This is a command-line tool for analying the log files outputted with a <i>ModelComparisonLogger</i> included.
+<p/>This is a command-line tool for analying the log files outputted with a <i>ModelComparisonLogger</i> included. 
 
 <p/>It takes your log file and produces an estimate for the Bayes factor.
+
+<p/>See this <a href='/ModelComparison/using-modelcomparison-calculator/'>guide to using the calculator</a>
 
 </div>
 
