@@ -75,6 +75,7 @@ public class ModelComparisonCalculator {
 
             if (args.length == 0){
                 System.out.println("Please enter just one filename for a log file which contains sampled values for beta and U.");
+                //Would be lovely to create a GUI for this also.... one day perhaps
             }
             else{
                 File inputFile = new File(args[0]);

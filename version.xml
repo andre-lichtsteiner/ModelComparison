@@ -1,5 +1,8 @@
 <addon name="ModelComparison" version="1.0.0">
   <depends on="beast2" atleast="2.4.0"/>
-
-  <!-- Add other dependencies as necessary. -->
+  <addonapp description="ModelComparison Calculator"
+              class="beast.app.tools.ModelComparisonCalculator"
+              args=""
+              icon=""
+            />
 </addon>
