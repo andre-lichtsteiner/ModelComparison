@@ -52,6 +52,12 @@ import beast.util.Randomizer;
                 "  evolutionary analysis. PLoS Computational Biology 10(4): e1003537"
         , year = 2014, firstAuthorSurname = "bouckaert",
         DOI="10.1371/journal.pcbi.1003537")
+
+/**
+ * Created by Andre Lichtsteiner (https://andre-lichtsteiner.github.io/)
+ * (Based almost entirely on existing BEAST 2 MCMC code)
+ * This class allows for the value of the betaParameterInput to be changed progressively as the MCMC chain proceeds.
+ */
 public class ModelComparisonMCMC extends MCMC {
 
     final public Input<String> betaControlModeInput = new Input<>("betaControlMode", "specify the way that beta should be controlled across the MCMC chain. valid options: 'static' (don't change beta); 'oneway' (beta will change from  0 to 1 OR 1 to 0); 'bothways' (beta will change in one direction and then return to the start)", Input.Validate.REQUIRED);

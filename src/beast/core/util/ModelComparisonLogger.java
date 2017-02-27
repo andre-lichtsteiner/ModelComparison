@@ -8,7 +8,8 @@ import beast.math.distributions.ModelComparisonDistribution;
 import java.io.PrintStream;
 
 /**
- * Created by andre on 3/02/17.
+ * Created by Andre Lichtsteiner (https://andre-lichtsteiner.github.io/)
+ * This class defines a BEAST Object which can be used to log the values for beta and U at a given interval along the chain.
  */
 public class ModelComparisonLogger extends BEASTObject implements Loggable {
 

@@ -1,12 +1,18 @@
 package beast.app.tools;
 
 
+import beast.core.Citation;
+
 import java.io.*;
 import java.util.ArrayList;
 
 /**
- * Created by andre on 15/02/17.
+ * Created by Andre Lichtsteiner (https://andre-lichtsteiner.github.io/)
+ * This class allows for calculating the estimate for the Bayes factor between two models,
+ * from a log file which contains values for U and beta (which were captured using ModelComparisonLogger)
+ * This supports oneway and bothways analyses automatically.
  */
+@Citation("Lartillot and Philippe (2006) 'Computing Bayes Factors Using Thermodynamic Integration'")
 public class ModelComparisonCalculator {
 
     //The following code started off as a direct copy from Remco's Model_Selection package
@@ -66,44 +72,46 @@ public class ModelComparisonCalculator {
             */
 
             // Command line version
-            File[] inputFiles = new File[args.length];
-            boolean accessProblem = false;
 
-            for (int i = 0; i < args.length; i++){
-                inputFiles[i] = new File(args[i]);
-                if( ! inputFiles[i].canRead()) {
-                    accessProblem = true;
-                    System.out.println("Unable to read file " + i);
-                }
-            }
-            if (accessProblem){
-                System.out.println("Please check that the files you are trying to use exist and that there are no typos. The files must also be accessible by Java.");
+            if (args.length == 0){
+                System.out.println("Please enter just one filename for a log file which contains sampled values for beta and U.");
             }
             else{
-                System.out.println("Starting to read from files");
-                ArrayList<Double>[][] valuesFromFiles = new ArrayList[inputFiles.length][2];
+                File inputFile = new File(args[0]);
 
-                try {
-                    for(int i = 0; i < inputFiles.length; i++){
-                        valuesFromFiles[i] = extractValuesFromFile(inputFiles[i]);
-                    }
+                boolean accessProblem = false;
 
-                    //Have successfully read a value for beta and U for each line in each input file
-                    //Now perform the analysis of the values
-                    if(inputFiles.length == 1){
-                       oneFileAnalysis(valuesFromFiles[0]);
-                    }
-                    else if (inputFiles.length == 2){
-                        twoFileAnalysis(valuesFromFiles[0], valuesFromFiles[1]);
-                    }
-
+                if( ! inputFile.canRead()) {
+                    accessProblem = true;
+                    System.out.println("Unable to read file.");
                 }
-                catch(Exception e){
-                    System.out.println("Had an issue while trying to read from one or both of the input files.");
+
+
+                if (accessProblem){
+                    System.out.println("Please check that the file you are trying to use exists and that there are no typos. The file must also be accessible by this program.");
+                }
+                else{
+                    System.out.println("Checking and reading file...");
+                    ArrayList<Double>[] valuesFromFiles = new ArrayList[2];
+
+                    try {
+
+                        valuesFromFiles = extractValuesFromFile(inputFile);
+
+                        //Have successfully read a value for beta and U for each line in each input file
+                        //Now perform the analysis of the values
+
+                        oneFileAnalysis(valuesFromFiles);
+
+                    }
+                    catch(Exception e){
+                        System.out.println(e);
+                        e.printStackTrace();
+
+                        System.out.println("Had an issue while trying to read from the input file.");
+                    }
                 }
             }
-
-
     }
 
     private static ArrayList<Double>[] extractValuesFromFile(File inputFile) throws Exception{
@@ -180,24 +188,20 @@ public class ModelComparisonCalculator {
 
         if(oneway0to1 || oneway1to0){
             //We have a oneway analysis to perform
-            double result = oneWayAnalysis(valuesFromFile);
-            System.out.println("Log file analysed. The log Bayes factor calculated is: ");
-            System.out.println(result);
+           oneWayAnalysis(valuesFromFile);
+
 
 
         }
         else if(bothways0to0 || bothways1to1){
             //We have a bothways analysis to perform
             //Not 100% certain of how to exactly this will be done
+            bothWaysAnalysis(valuesFromFile);
 
         }
     }
 
-    private static void twoFileAnalysis(ArrayList<Double>[] valuesFromFile0, ArrayList<Double>[] valuesFromFile1){
-
-    }
-
-    private static double oneWayAnalysis(ArrayList<Double>[] valuesFromFile){
+    private static void oneWayAnalysis(ArrayList<Double>[] valuesFromFile){
         ArrayList<Double> usefulUValues = new ArrayList<>();
         boolean betaIsChanging = true; //Assume true at first, then set to false if find it is not the case
         for (int row = 0; row < valuesFromFile[0].size(); row++){
@@ -237,7 +241,153 @@ public class ModelComparisonCalculator {
         }
 
         double result = Utotal / usefulUValues.size();
-        return result;
+
+        System.out.println("Log file analysed. The log Bayes factor calculated is: ");
+        System.out.println(result);
+
+    }
+
+    private static void bothWaysAnalysis(ArrayList<Double>[] valuesFromFile){
+        //ArrayList<Double> usefulUValuesA = new ArrayList<>();
+        //ArrayList<Double> usefulUValuesB = new ArrayList<>();
+
+        ArrayList<Double>[] usefulUValues = new ArrayList[2];
+        usefulUValues[0] = new ArrayList<Double>();
+        usefulUValues[1] = new ArrayList<Double>();
+
+        // usefulUValuesA
+        int stage = 0;
+        int direction = 0; // 0 = not yet set, 1 = increasing, -1 = decreasing
+        boolean betaIsChanging = true; //Assume true at first, then set to false if find it is not the case
+        //Need to also identify when the direction changes, and start doing things differently after that
+        for (int row = 0; row < valuesFromFile[0].size(); row++){
+            //For each row in the file
+            if (row == 0) {
+                if (valuesFromFile[0].get(row).equals(valuesFromFile[0].get(row + 1))){
+                    betaIsChanging = false;
+                } else {
+                    //Use the current line as the first U value
+                    usefulUValues[stage].add(valuesFromFile[1].get(row));
+                    //Set the direction
+                    if (valuesFromFile[0].get(row + 1) > valuesFromFile[0].get(row)){
+                        //Increasing
+                        direction = 1;
+                    }
+                    else{
+                        //Decreasing
+                        direction = -1;
+                    }
+                }
+            }
+            else if( ! betaIsChanging){ //Need to notice when beta starts changing
+                if ((row + 1) != valuesFromFile[0].size()) { //Checking that there is an element one ahead before using it
+                    if ( ! valuesFromFile[0].get(row).equals(valuesFromFile[0].get(row + 1))) {
+                        betaIsChanging = true;
+                        usefulUValues[stage].add(valuesFromFile[1].get(row));
+                        //Set the direction
+                        if (valuesFromFile[0].get(row + 1) > valuesFromFile[0].get(row)){
+                            //Increasing
+                            direction = 1;
+                        }
+                        else{
+                            //Decreasing
+                            direction = -1;
+                        }
+                    }
+                }
+            }
+            else if (betaIsChanging){
+                usefulUValues[stage].add(valuesFromFile[1].get(row));
+
+                //Manage the direction and stage variables
+                if (direction == 0){
+                    //Not yet set, so need to set it
+                    //Set the direction
+                    if (valuesFromFile[0].get(row + 1) > valuesFromFile[0].get(row)){
+                        //Increasing
+                        direction = 1;
+                    }
+                    else{
+                        //Decreasing
+                        direction = -1;
+                    }
+                }
+                else{
+                    //Check if direction has changed
+                    //Set the direction
+                    int temp_direction;
+                    if ((row + 1) != valuesFromFile[0].size()) {
+                        if (valuesFromFile[0].get(row + 1) > valuesFromFile[0].get(row)) {
+                            //Increasing
+                            temp_direction = 1;
+                        } else {
+                            //Decreasing
+                            temp_direction = -1;
+                        }
+                        if (temp_direction != direction) {
+                            //Change the stage variable and the direction vairable
+                            direction = temp_direction;
+                            stage = 1 - stage; //If was 0, now becomes 1; if was 1, now becomes 0.
+                            System.out.println("Changed direction!");
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+
+
+
+
+
+        //FOR CHECKING PURPOSES
+        /*
+        System.out.println("PRINTING STAGE 1 (first direction found)");
+        for (int i = 0; i < usefulUValues[0].size(); i++ ){
+            System.out.println(usefulUValues[0].get(i));
+        }
+
+        System.out.println("PRINTING STAGE 2 (second direction found)");
+        for (int i = 0; i < usefulUValues[1].size(); i++ ){
+           System.out.println(usefulUValues[1].get(i));
+        }
+
+        int total_count = usefulUValues[0].size() + usefulUValues[1].size();
+        System.out.println("In total had " + total_count + "useful U values found.");
+        */
+
+        //Calculate using the usefulUValues
+        //Stage 0
+        double UtotalA = 0.0;
+        for (int i = 0; i < usefulUValues[0].size(); i++ ){
+            if (i == 0 || i == usefulUValues[0].size() - 1){
+                UtotalA = UtotalA + (usefulUValues[0].get(i) * 0.5);
+            }
+            else{
+                UtotalA = UtotalA + usefulUValues[0].get(i);
+            }
+        }
+        double resultA = UtotalA / usefulUValues[0].size();
+
+        //Stage 1
+        double UtotalB = 0.0;
+        for (int i = 0; i < usefulUValues[1].size(); i++ ){
+            if (i == 0 || i == usefulUValues[1].size() - 1){
+                UtotalB = UtotalB + (usefulUValues[1].get(i) * 0.5);
+            }
+            else{
+                UtotalB = UtotalB + usefulUValues[1].get(i);
+            }
+        }
+        double resultB = UtotalB / usefulUValues[1].size();
+
+        System.out.println("Log file analysed. The log Bayes factor calculated is: ");
+        System.out.println(" - First Direction:");
+        System.out.println(resultA);
+        System.out.println(" - Second Direction:");
+        System.out.println(resultB);
     }
 }
 
