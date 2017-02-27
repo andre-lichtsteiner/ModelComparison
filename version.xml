@@ -3,6 +3,6 @@
   <addonapp description="ModelComparison Calculator"
               class="beast.app.tools.ModelComparisonCalculator"
               args=""
-              icon=""
+              icon="icon.png"
             />
 </addon>
