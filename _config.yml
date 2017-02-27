@@ -11,7 +11,8 @@ author:
   url:        http://andrelichtsteiner.com/
 
 github_url: https://github.com/andre-lichtsteiner/ModelComparison
-beauti_package_repo_url: none yet
+beauti_package_repo_url: https://andre-lichtsteiner.github.io/ModelComparison/dist/package.xml
+beauti_latest_dist_zip_url: https://andre-lichtsteiner.github.io/ModelComparison/dist/ModelComparison.v1.0.0.zip
 
 #Collab links
 people_urls:
